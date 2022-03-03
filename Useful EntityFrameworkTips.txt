@@ -1,0 +1,2 @@
+dotnet ef migrations add updateUser  
+dotnet ef database update  
