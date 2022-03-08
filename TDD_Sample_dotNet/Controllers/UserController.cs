@@ -52,7 +52,7 @@ namespace TDD_Sample_dotNet.Controllers
         // PUT: api/User/5
         // Update the user
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, UpdateUserCommand command)
+        public async Task<IActionResult> PutUser(int id, [FromBody] UpdateUserCommand command)
         {
             if (id != command.Id)
             {
@@ -70,7 +70,7 @@ namespace TDD_Sample_dotNet.Controllers
         // POST: api/User
         // Create the user
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser([FromBody] CreateUserCommand command)
+        public async Task<ActionResult> PostUser([FromBody] CreateUserCommand command)
         {
             var vUserAdded = await _mediator.Send(command);
             return CreatedAtAction("GetUser", new { id = vUserAdded.Id }, vUserAdded);
@@ -80,7 +80,10 @@ namespace TDD_Sample_dotNet.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var isDeletedOk = await _userService.RemoveUserById(id);
+
+            var command = new DeleteUserCommand(id);
+            var isDeletedOk = await _mediator.Send(command);
+
             if (!isDeletedOk)
             {
                 return NotFound();
