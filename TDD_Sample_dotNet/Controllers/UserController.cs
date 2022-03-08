@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TDD_Sample_dotNet.Models;
+using TDD_Sample_dotNet.Services;
 
 namespace TDD_Sample_dotNet.Controllers
 {
@@ -13,25 +14,26 @@ namespace TDD_Sample_dotNet.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly DemoContext _context;
+        private readonly IUserService _userService;
 
-        public UserController(DemoContext context)
+
+        public UserController(IUserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
         // GET: api/User
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            return await _userService.GetAllUsers();
         }
 
         // GET: api/User/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userService.GetUserById(id);
 
             if (user == null)
             {
@@ -51,23 +53,10 @@ namespace TDD_Sample_dotNet.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
+            bool isUpdateOk = await _userService.UpdateUSer(user);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            if (!isUpdateOk)
+                return BadRequest("Problem in updating");
 
             return NoContent();
         }
@@ -77,8 +66,7 @@ namespace TDD_Sample_dotNet.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            var vUserAdded = await _userService.AddUser(user);
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
@@ -87,21 +75,15 @@ namespace TDD_Sample_dotNet.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            var isDeletedOk = await _userService.RemoveUserById(id);
+            if (!isDeletedOk)
             {
                 return NotFound();
             }
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
-        private bool UserExists(int id)
-        {
-            return _context.Users.Any(e => e.Id == id);
-        }
+
     }
 }
