@@ -7,9 +7,9 @@ namespace TDD_Sample_dotNet.Services
 {
     public interface IUserService
     {
-        public Task<ActionResult<IEnumerable<User>>> GetAllUsers();
-        public Task<ActionResult<User>> GetUserById(int id);
-        public Task<ActionResult<User>> AddUser(User user);
+        public Task<List<User>> GetAllUsers();
+        public Task<User> GetUserById(int id);
+        public Task<User> AddUser(User user);
         public Task<bool> UpdateUSer(User user);
         public Task<bool> RemoveUserById(int id);
     }

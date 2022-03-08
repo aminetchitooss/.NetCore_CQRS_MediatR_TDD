@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TDD_Sample_dotNet.Models;
 using TDD_Sample_dotNet.Services;
+using TDD_Sample_dotNet.Queries;
+using MediatR;
 
 namespace TDD_Sample_dotNet.Controllers
 {
@@ -15,18 +17,21 @@ namespace TDD_Sample_dotNet.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IMediator _mediator;
 
-
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IMediator mediator)
         {
             _userService = userService;
+            _mediator = mediator;
         }
 
         // GET: api/User
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult> GetUsers()
         {
-            return await _userService.GetAllUsers();
+            var query = new GetAllUsersQuery();
+            var vResults = await _mediator.Send(query);
+            return Ok(vResults);
         }
 
         // GET: api/User/5

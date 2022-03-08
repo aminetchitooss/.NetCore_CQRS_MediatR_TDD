@@ -16,18 +16,18 @@ namespace TDD_Sample_dotNet.Services
             _context = context;
         }
 
-        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+        public async Task<List<User>> GetAllUsers()
         {
             return await _context.Users.ToListAsync();
         }
 
-        public async Task<ActionResult<User>> GetUserById(int id)
+        public async Task<User> GetUserById(int id)
         {
             var user = await _context.Users.FindAsync(id);
             return user;
         }
 
-        public async Task<ActionResult<User>> AddUser(User user)
+        public async Task<User> AddUser(User user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
