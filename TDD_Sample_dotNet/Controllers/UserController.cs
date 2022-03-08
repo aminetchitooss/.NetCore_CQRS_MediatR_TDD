@@ -52,16 +52,16 @@ namespace TDD_Sample_dotNet.Controllers
         // PUT: api/User/5
         // Update the user
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<IActionResult> PutUser(int id, UpdateUserCommand command)
         {
-            if (id != user.Id)
+            if (id != command.Id)
             {
                 return BadRequest();
             }
 
-            bool isUpdateOk = await _userService.UpdateUSer(user);
+            User vUserAdded = await _mediator.Send(command);
 
-            if (!isUpdateOk)
+            if (vUserAdded == null)
                 return BadRequest("Problem in updating");
 
             return NoContent();

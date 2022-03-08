@@ -10,7 +10,7 @@ namespace TDD_Sample_dotNet.Services
         public Task<List<User>> GetAllUsers();
         public Task<User> GetUserById(int id);
         public Task<User> AddUser(User user);
-        public Task<bool> UpdateUSer(User user);
+        public Task<User> UpdateUSer(User user);
         public Task<bool> RemoveUserById(int id);
     }
 }

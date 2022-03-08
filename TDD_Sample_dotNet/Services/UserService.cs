@@ -48,7 +48,7 @@ namespace TDD_Sample_dotNet.Services
             return true;
         }
 
-        public async Task<bool> UpdateUSer(User user)
+        public async Task<User> UpdateUSer(User user)
         {
             _context.Entry(user).State = EntityState.Modified;
 
@@ -58,9 +58,9 @@ namespace TDD_Sample_dotNet.Services
             }
             catch (DbUpdateConcurrencyException)
             {
-                return false;
+                return null;
             }
-            return true;
+            return user;
         }
 
     }
