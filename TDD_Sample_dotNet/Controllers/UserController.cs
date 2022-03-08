@@ -36,16 +36,16 @@ namespace TDD_Sample_dotNet.Controllers
 
         // GET: api/User/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult> GetUser(int id)
         {
-            var user = await _userService.GetUserById(id);
+            var query = new GetUserByIdQuery(id);
+            var vResults = await _mediator.Send(query);
 
-            if (user == null)
+            if (vResults == null)
             {
                 return NotFound();
             }
-
-            return user;
+            return Ok(vResults);
         }
 
         // PUT: api/User/5
