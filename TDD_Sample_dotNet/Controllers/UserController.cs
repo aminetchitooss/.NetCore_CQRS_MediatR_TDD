@@ -9,6 +9,7 @@ using TDD_Sample_dotNet.Models;
 using TDD_Sample_dotNet.Services;
 using TDD_Sample_dotNet.Queries;
 using MediatR;
+using TDD_Sample_dotNet.Commands;
 
 namespace TDD_Sample_dotNet.Controllers
 {
@@ -49,7 +50,7 @@ namespace TDD_Sample_dotNet.Controllers
         }
 
         // PUT: api/User/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // Update the user
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
@@ -67,13 +68,12 @@ namespace TDD_Sample_dotNet.Controllers
         }
 
         // POST: api/User
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // Create the user
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser([FromBody] CreateUserCommand command)
         {
-            var vUserAdded = await _userService.AddUser(user);
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            var vUserAdded = await _mediator.Send(command);
+            return CreatedAtAction("GetUser", new { id = vUserAdded.Id }, vUserAdded);
         }
 
         // DELETE: api/User/5
